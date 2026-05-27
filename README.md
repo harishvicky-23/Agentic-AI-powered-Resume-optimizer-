@@ -24,7 +24,7 @@ generates targeted interview questions, and creates STAR talking points.
 |-----------|------------------|
 | AI orchestration | CrewAI sequential agents |
 | Fast LLM (free) | [Groq](https://console.groq.com) — `llama-3.3-70b-versatile` |
-| Smart LLM (free) | [Google Gemini Flash](https://ai.google.dev) — `gemini-2.5-flash` |
+| Smart LLM (free) | [Google Gemini Flash](https://ai.google.dev) — `gemini-2.0-flash` |
 | RAG embeddings | Google `embedding-001` + FAISS |
 | Web UI | [Streamlit](https://streamlit.io) |
 
