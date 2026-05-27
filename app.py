@@ -185,23 +185,30 @@ st.markdown("""
     }
     
     .api-card {
-        background: #ffffff;
+        background: #ffffff !important;
         border: 1px solid var(--line);
         border-radius: 8px;
         padding: 1rem 1.15rem;
         min-height: 100%;
         box-shadow: 0 1px 8px rgba(15,23,42,.04);
     }
+
     .api-card h3 {
         display: flex;
         align-items: center;
         gap: .45rem;
         margin-top: 0;
+        color: var(--ink) !important;
+        font-weight: 800 !important;
     }
-    .api-note {
-        color: var(--muted);
+
+    .api-card .api-note {
+        color: var(--muted) !important;
         font-size: .9rem;
         margin: .2rem 0 .8rem;
+    }
+    .api-card .api-note strong {
+        color: var(--ink) !important;
     }
     
     @media (max-width: 900px) {
