@@ -910,6 +910,7 @@ Role: {st.session_state.job_role}
 
 
 # ─── PAGE: SETUP ─────────────────────────────────────────────────────────────────
+# ─── PAGE: SETUP ─────────────────────────────────────────────────────────────────
 def page_setup():
     st.markdown(f"# {icon('key')} API Key Setup", unsafe_allow_html=True)
     st.markdown("""
@@ -1005,38 +1006,6 @@ Enter a new key only when you want to update it. Saved keys stay hidden.
                 except Exception as e:
                     st.error("Google AI test failed.")
                     st.caption(short_error(e))
-
-    st.markdown("---")
-    with st.form("save_both_keys_form", clear_on_submit=True):
-        st.markdown("### Save Both Keys")
-        both_groq = st.text_input(
-            "New Groq key",
-            type="password",
-            value="",
-            placeholder="Optional",
-        )
-        both_google = st.text_input(
-            "New Google AI key",
-            type="password",
-            value="",
-            placeholder="Optional",
-        )
-        save_both = st.form_submit_button("Save Entered Keys", use_container_width=True)
-        if save_both:
-            saved = save_env_values(
-                {
-                    "GROQ_API_KEY": both_groq.strip(),
-                    "GOOGLE_API_KEY": both_google.strip(),
-                }
-            )
-            if saved:
-                labels = {
-                    "GROQ_API_KEY": "Groq",
-                    "GOOGLE_API_KEY": "Google AI",
-                }
-                st.success("Saved: " + ", ".join(labels[key] for key in saved))
-            else:
-                st.warning("Paste at least one key before saving.")
 
 
 # ─── Router ───────────────────────────────────────────────────────────────────────
