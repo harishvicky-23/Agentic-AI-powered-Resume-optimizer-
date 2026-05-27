@@ -967,132 +967,132 @@ Enter a new key only when you want to update it. Saved keys stay hidden.
                     st.caption(short_error(e))
 
     with col_google:
-    st.markdown(
-        f"""<div class="api-card">
-<h3>{icon('auto_awesome')} Google AI</h3>
-<div class="api-note">Model: <strong>{GEMINI_MODEL}</strong></div>
-<div class="api-note">Using Streamlit Secrets first, then environment fallback.</div>
-</div>""",
-        unsafe_allow_html=True,
-    )
-
-    with st.form("google_key_form", clear_on_submit=True):
-
-        google_key = st.text_input(
-            "GOOGLE_API_KEY",
-            type="password",
-            value="",
-            placeholder="Optional local override key"
+        st.markdown(
+            f"""<div class="api-card">
+    <h3>{icon('auto_awesome')} Google AI</h3>
+    <div class="api-note">Model: <strong>{GEMINI_MODEL}</strong></div>
+    <div class="api-note">Using Streamlit Secrets first, then environment fallback.</div>
+    </div>""",
+            unsafe_allow_html=True,
         )
-
-        save_google, test_google = st.columns(2)
-
-        save_google_clicked = save_google.form_submit_button(
-            "Save Google Key",
-            use_container_width=True
-        )
-
-        test_google_clicked = test_google.form_submit_button(
-            "Test Gemini",
-            use_container_width=True
-        )
-
-        # SAVE KEY LOCALLY
-        if save_google_clicked:
-
-            if google_key.strip():
-                os.environ["GOOGLE_API_KEY"] = google_key.strip()
-                st.success("Google API key saved locally.")
-            else:
-                st.warning("Please enter a key.")
-
-        # TEST GEMINI
-        if test_google_clicked:
-
-            try:
-                import time
-                import concurrent.futures
-
-                # PRIORITY:
-                # 1. Streamlit Secrets
-                # 2. Manual textbox
-                # 3. Environment variable
-
-                key = (
-                    st.secrets.get("GOOGLE_API_KEY")
-                    or google_key.strip()
-                    or os.getenv("GOOGLE_API_KEY")
-                )
-
-                if not key:
-                    raise ValueError(
-                        "No Google API key found in Streamlit Secrets or environment."
-                    )
-
-                ensure_event_loop()
-
-                from langchain_google_genai import ChatGoogleGenerativeAI
-
-                llm = ChatGoogleGenerativeAI(
-                    model=GEMINI_MODEL,
-                    google_api_key=key,
-                    temperature=0,
-                    timeout=10,  # HARD TIMEOUT
-                )
-
-                # RUN WITH HARD STOP
-                def run_test():
-                    return llm.invoke("Reply ONLY with: Gemini OK")
-
-                start = time.time()
-
-                with concurrent.futures.ThreadPoolExecutor() as executor:
-
-                    future = executor.submit(run_test)
-
-                    try:
-                        res = future.result(timeout=10)
-
-                    except concurrent.futures.TimeoutError:
-                        raise TimeoutError(
-                            "Gemini API did not respond within 10 seconds."
-                        )
-
-                total = round(time.time() - start, 2)
-
-                response_text = getattr(res, "content", str(res))
-
-                st.success(f"✅ Gemini working in {total}s")
-                st.code(response_text)
-
-            except Exception as e:
-
-                error_text = str(e)
-
-                # BETTER ERROR MESSAGES
-
-                if "429" in error_text:
-                    st.error("❌ Gemini quota exceeded.")
-                    st.caption(
-                        "Your Google AI project has no remaining quota "
-                        "or billing is disabled."
-                    )
-
-                elif "API_KEY" in error_text.upper():
-                    st.error("❌ Invalid Google API key.")
-
-                elif "timeout" in error_text.lower():
-                    st.error("❌ Gemini request timeout.")
-                    st.caption(
-                        "The API did not respond within 10 seconds."
-                    )
-
-                elif "quota" in error_text.lower():
-                    st.error("❌ Gemini quota/billing issue.")
-
+    
+        with st.form("google_key_form", clear_on_submit=True):
+    
+            google_key = st.text_input(
+                "GOOGLE_API_KEY",
+                type="password",
+                value="",
+                placeholder="Optional local override key"
+            )
+    
+            save_google, test_google = st.columns(2)
+    
+            save_google_clicked = save_google.form_submit_button(
+                "Save Google Key",
+                use_container_width=True
+            )
+    
+            test_google_clicked = test_google.form_submit_button(
+                "Test Gemini",
+                use_container_width=True
+            )
+    
+            # SAVE KEY LOCALLY
+            if save_google_clicked:
+    
+                if google_key.strip():
+                    os.environ["GOOGLE_API_KEY"] = google_key.strip()
+                    st.success("Google API key saved locally.")
                 else:
-                    st.error("❌ Google AI test failed.")
-                    st.caption(error_text)
+                    st.warning("Please enter a key.")
+    
+            # TEST GEMINI
+            if test_google_clicked:
+    
+                try:
+                    import time
+                    import concurrent.futures
+    
+                    # PRIORITY:
+                    # 1. Streamlit Secrets
+                    # 2. Manual textbox
+                    # 3. Environment variable
+    
+                    key = (
+                        st.secrets.get("GOOGLE_API_KEY")
+                        or google_key.strip()
+                        or os.getenv("GOOGLE_API_KEY")
+                    )
+    
+                    if not key:
+                        raise ValueError(
+                            "No Google API key found in Streamlit Secrets or environment."
+                        )
+    
+                    ensure_event_loop()
+    
+                    from langchain_google_genai import ChatGoogleGenerativeAI
+    
+                    llm = ChatGoogleGenerativeAI(
+                        model=GEMINI_MODEL,
+                        google_api_key=key,
+                        temperature=0,
+                        timeout=10,  # HARD TIMEOUT
+                    )
+    
+                    # RUN WITH HARD STOP
+                    def run_test():
+                        return llm.invoke("Reply ONLY with: Gemini OK")
+    
+                    start = time.time()
+    
+                    with concurrent.futures.ThreadPoolExecutor() as executor:
+    
+                        future = executor.submit(run_test)
+    
+                        try:
+                            res = future.result(timeout=10)
+    
+                        except concurrent.futures.TimeoutError:
+                            raise TimeoutError(
+                                "Gemini API did not respond within 10 seconds."
+                            )
+    
+                    total = round(time.time() - start, 2)
+    
+                    response_text = getattr(res, "content", str(res))
+    
+                    st.success(f"✅ Gemini working in {total}s")
+                    st.code(response_text)
+    
+                except Exception as e:
+    
+                    error_text = str(e)
+    
+                    # BETTER ERROR MESSAGES
+    
+                    if "429" in error_text:
+                        st.error("❌ Gemini quota exceeded.")
+                        st.caption(
+                            "Your Google AI project has no remaining quota "
+                            "or billing is disabled."
+                        )
+    
+                    elif "API_KEY" in error_text.upper():
+                        st.error("❌ Invalid Google API key.")
+    
+                    elif "timeout" in error_text.lower():
+                        st.error("❌ Gemini request timeout.")
+                        st.caption(
+                            "The API did not respond within 10 seconds."
+                        )
+    
+                    elif "quota" in error_text.lower():
+                        st.error("❌ Gemini quota/billing issue.")
+    
+                    else:
+                        st.error("❌ Google AI test failed.")
+                        st.caption(error_text)
 
 # ─── Router ───────────────────────────────────────────────────────────────────────
 page = st.session_state.page
